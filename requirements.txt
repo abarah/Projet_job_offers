@@ -1,5 +1,4 @@
-pip==24.2
-Python==3.8.20
+pip==24.3.1
 cassandra-driver== 3.29.2
 Flask==2.2.5
 joblib==1.4.2
