@@ -31,19 +31,31 @@ app.secret_key = 'secret'
 
 
 # Connexion à Cassandra
-cluster = Cluster(['127.0.0.1'])
-session_cassandra = cluster.connect('job_scraping')
+from cassandra.cluster import Cluster
+from cassandra.auth import PlainTextAuthProvider
+import json
+
+with open('.\\joboffers-token.json', "r") as f:
+    creds = json.load(f)
+    ASTRA_DB_APPLICATION_TOKEN = creds["token"]
+
+cluster = Cluster(
+    cloud={
+        "secure_connect_bundle": '.\\secure-connect-joboffers.zip',
+    },
+    auth_provider=PlainTextAuthProvider(
+        "token",
+        ASTRA_DB_APPLICATION_TOKEN,
+    ),
+)
+
+session_cassandra = cluster.connect('jobscraping')
 
 # Initialiser le driver Selenium
-service = Service(r'C:\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe')
+service = Service(r'.\\chromedriver-win64\\chromedriver.exe')
 driver = webdriver.Chrome(service=service)
 
-# Créer ou utiliser la keyspace
-session_cassandra.execute("""
-    CREATE KEYSPACE IF NOT EXISTS job_scraping 
-    WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1}
-""")
-session_cassandra.set_keyspace('job_scraping')
+
 
 # Créer les tables si elles n'existent pas
 session_cassandra.execute("""
@@ -67,9 +79,6 @@ session_cassandra.execute("""
     )
 """)
 
-# Initialiser Selenium WebDriver
-service = Service(r'C:\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe')
-driver = webdriver.Chrome(service=service)
 
 # Fonction pour effectuer le scrapping d'Indeed
 def scrape_indeed():
@@ -168,10 +177,10 @@ def fetch_job_details():
 
     print("Récupération des détails terminée.")
 
-"""@app.before_first_request
+@app.before_first_request
 def initialize_scraping():
     scrape_indeed()
-    fetch_job_details()"""
+    fetch_job_details()
     
 @app.route('/')
 def index():
