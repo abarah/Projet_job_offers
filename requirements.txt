@@ -1,4 +1,4 @@
-pip==24.2
+pip==24.3.1
 Python==3.8.20
 spacy==2.3.5
 cassandra-driver== 3.29.2
