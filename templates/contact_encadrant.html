@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat avec l'encadrant</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        #chat-box {
+            width: 400px;
+            height: 300px;
+            border: 1px solid #ccc;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+        #chat-box div {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat avec l'encadrant</h1>
+    <div id="chat-box"></div>
+    <input type="text" id="message" placeholder="Votre message" />
+    <button onclick="sendMessage()">Envoyer</button>
+
+    <script>
+        const chatId = '123e4567-e89b-12d3-a456-426614174000'; // ID du chat
+        const senderId = 'user-uuid'; // Remplacez par l'ID de l'utilisateur
+        const receiverId = 'encadrant-uuid'; // ID de l'encadrant
+
+        async function loadMessages() {
+            const response = await axios.get('/chat/messages', {
+                params: { chat_id: chatId, limit: 20 }
+            });
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = '';
+            response.data.forEach(msg => {
+                const div = document.createElement('div');
+                div.textContent = `${msg.sender_id === senderId ? 'Vous' : 'Encadrant'} : ${msg.message}`;
+                chatBox.appendChild(div);
+            });
+        }
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('message');
+            const message = messageInput.value;
+            await axios.post('/chat/send', {
+                chat_id: chatId,
+                sender_id: senderId,
+                receiver_id: receiverId,
+                message: message
+            });
+            messageInput.value = '';
+            loadMessages(); // Recharge les messages après l'envoi
+        }
+
+        // Charger les messages toutes les 5 secondes
+        setInterval(loadMessages, 5000);
+        loadMessages(); // Chargement initial
+    </script>
+</body>
+</html>
