@@ -15,7 +15,7 @@ from flask import Flask,render_template,redirect,request,session
 from resume_screening import resparser, match
 from lxml import html
 
-
+nlp = spacy.load('fr_core_web_sm')
 
 
 
