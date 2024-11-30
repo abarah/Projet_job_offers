@@ -177,10 +177,10 @@ def fetch_job_details():
 
     print("Récupération des détails terminée.")
 
-@app.before_first_request
+"""@app.before_first_request
 def initialize_scraping():
     scrape_indeed()
-    fetch_job_details()
+    fetch_job_details()"""
     
 @app.route('/')
 def index():
