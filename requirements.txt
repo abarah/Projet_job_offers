@@ -1,5 +1,5 @@
 pip==24.3.1
-Python==3.8.20
+Python==3.11
 spacy==2.3.5
 cassandra-driver== 3.29.2
 Flask==2.2.5
