@@ -35,7 +35,7 @@ session_cassandra = connect_to_cassandra()
 
 # Initialisation du driver Selenium
 def init_webdriver():
-    service = Service('./chromedriver-win64/chromedriver.exe')
+    service = Service('./chromedriver')
     return webdriver.Chrome(service=service)
 
 driver = init_webdriver()
