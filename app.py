@@ -1,5 +1,5 @@
 import re
-import nltk
+#import nltk
 from cassandra.cluster import Cluster
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -12,7 +12,7 @@ from nltk.corpus import stopwords
 import os
 import pandas as pd
 from flask import Flask,render_template,redirect,request,session
-from resume_screening import resparser, match
+#from resume_screening import resparser, match
 from lxml import html
 
 
