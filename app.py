@@ -38,7 +38,7 @@ def init_webdriver():
     service = Service('./chromedriver')
     return webdriver.Chrome(service=service)
 
-driver = init_webdriver()
+
 
 # Création des tables si elles n'existent pas
 session_cassandra.execute("""
@@ -63,12 +63,14 @@ def extract_salary_range(salary_text):
 
 # Scraper les offres d'emploi sur Indeed
 def scrape_indeed():
+    driver = init_webdriver()
     print("Scraping des offres Indeed...")
     keyword = 'informatique'
     location = 'France'
     url = f'https://fr.indeed.com/jobs?q={keyword}&l={location}&lang=en'
     driver.get(url)
     time.sleep(5)
+    
 
     for _ in range(5):  # Limité à 5 pages pour la démo
         jobs_list = driver.find_elements(By.XPATH, '//div[contains(@class, "job_seen_beacon")]')
@@ -99,6 +101,7 @@ def scrape_indeed():
 
 # Récupérer les détails des offres d'emploi
 def fetch_job_details():
+    driver = init_webdriver()
     print("Récupération des détails...")
     rows = session_cassandra.execute("SELECT * FROM job_offers")
     for row in rows:
@@ -123,10 +126,131 @@ def fetch_job_details():
         except Exception as e:
             print(f"Erreur pour {row.link} : {e}")
 
-# Route principale
+"""@app.before_first_request
+def initialize_scraping():
+    scrape_indeed()
+    fetch_job_details()"""
+    
 @app.route('/')
 def index():
-    return render_template('index.html')
+    
+    return render_template("index.html")
+
+@app.route("/uploadInit")
+def uploadInit():
+    global InternType
+    InternType='Init'
+    print(InternType)
+    return render_template("upload.html")
+
+@app.route("/home")
+def home():
+    return redirect('/')
+
+
+
+@app.route('/submit', methods=['POST'])
+def submit_data():
+    global cvPath 
+    global InternType
+    if request.method == 'POST':        
+        f = request.files['userfile']
+        cvPath = os.path.join(app.instance_path, 'resume_files', f.filename)
+        f.save(cvPath)
+        
+    stopw  = set(stopwords.words('french'))  # Utilisation des stopwords en français
+    
+    # Charger les données depuis la base Cassandra plutôt que depuis un fichier CSV
+    query = "SELECT * FROM job_details"
+    rows = session_cassandra.execute(query)
+    job = pd.DataFrame(rows)  # Conversion des résultats de Cassandra en DataFrame
+    
+    job['test'] = job['description'].apply(lambda x: ' '.join([word for word in str(x).split() if len(word) > 2 and word not in stopw]))
+    df = job.drop_duplicates(subset='test').reset_index(drop=True)
+    df['clean'] = df['test'].apply(match.preprocessing)  # Assurez-vous que la fonction de pré-traitement fonctionne avec le français
+    jobdesc = df['clean'].values.astype('U')  # Conversion des descriptions en tableau numpy
+    
+    # Extraction des compétences depuis le CV
+    skills = resparser.skill(f'instance/resume_files/{f.filename}')
+    skills.append(match.preprocessing(skills[0]))
+    del skills[0]
+
+    # Calcul de la similarité entre compétences et descriptions d'emploi
+    count_matrix = match.vectorizing(skills[0], jobdesc)
+    matchPercentage = match.coSim(count_matrix)
+    matchPercentage = pd.DataFrame(matchPercentage, columns=['Skills Match'])
+
+    # Recommandations d'offres d'emploi basées sur la similarité des compétences
+    result_cosine = df[['title', 'company', 'link','contract_type','location']]  # Assurez-vous que les noms de colonnes sont corrects
+    result_cosine = result_cosine.join(matchPercentage)
+    result_cosine = result_cosine[['title', 'company', 'Skills Match', 'link','contract_type']]
+    result_cosine.columns = ['Titre de l\'emploi', 'Entreprise', 'Correspondance des compétences', 'Lien','contrat']
+    result_cosine = result_cosine.sort_values('Correspondance des compétences', ascending=False).reset_index(drop=True).head(20)
+    
+    print(result_cosine)
+    return render_template('upload.html', column_names=result_cosine.columns.values, row_data=list(result_cosine.values.tolist()),
+                           link_column="Lien", zip=zip)
+
+@app.route('/submit2', methods=['POST'])
+def submit_data_filtre():
+    if request.method == 'POST':
+        print(cvPath)
+        # Récupération des filtres
+        location_filter = request.form.get('location', '').strip()
+        contract_filter = request.form.get('contract', '').strip()
+        salary_filter = request.form.get('min_salary', '').strip()
+
+        stopw = set(stopwords.words('french'))
+
+        # Chargement des données de Cassandra avec filtres
+        query = "SELECT * FROM job_details"
+        filters = []
+        
+       
+        
+        if salary_filter and salary_filter.startswith(">"):
+            try:
+                min_salary = int(salary_filter[1:])
+                filters.append(f"min_salary >= {min_salary}")
+            except ValueError:
+                pass
+
+        if filters:
+            query += " WHERE " + " AND ".join(filters)
+        
+        print(query)
+        rows = session_cassandra.execute(query)
+        job = pd.DataFrame(rows)
+        if contract_filter:
+            cf=f'{contract_filter}'
+            job2=job[job['contract_type'].str.contains(cf)==True]
+            job=job2
+        if location_filter:
+           lc=f'{location_filter}'
+           job1=job[job['location'].str.contains(lc)==True]
+           job=job1
+        job['test'] = job['description'].apply(lambda x: ' '.join([word for word in str(x).split() if len(word) > 2 and word not in stopw]))
+        df = job.drop_duplicates(subset='test').reset_index(drop=True)
+        df['clean'] = df['test'].apply(match.preprocessing)
+        jobdesc = df['clean'].values.astype('U')
+
+        skills = resparser.skill(cvPath)
+        skills.append(match.preprocessing(skills[0]))
+        del skills[0]
+
+        count_matrix = match.vectorizing(skills[0], jobdesc)
+        matchPercentage = match.coSim(count_matrix)
+        matchPercentage = pd.DataFrame(matchPercentage, columns=['Skills Match'])
+
+        result_cosine = df[['title', 'company', 'link', 'contract_type','location']]
+        result_cosine = result_cosine.join(matchPercentage)
+        result_cosine = result_cosine[['title', 'company', 'Skills Match', 'link', 'contract_type','location']]
+        result_cosine.columns = ['Titre de l\'emploi', 'Entreprise', 'Correspondance des compétences', 'Lien', 'contrat','location']
+        result_cosine = result_cosine.sort_values('Correspondance des compétences', ascending=False).reset_index(drop=True).head(20)
+
+        return render_template('upload.html', column_names=result_cosine.columns.values, row_data=list(result_cosine.values.tolist()),
+                               link_column="Lien", zip=zip)
+
 
 if __name__ == "__main__":
     app.run()
