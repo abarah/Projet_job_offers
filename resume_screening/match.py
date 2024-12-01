@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-def ngrams(string, n=3):
+def ngrams(string, n=2):
     string = fix_text(string) # fix text
     string = string.encode("ascii", errors="ignore").decode() #remove non ascii chars
     string = string.lower()
