@@ -1,6 +1,6 @@
 pip==24.2
 cassandra-driver== 3.29.2
-spacy
+spacy>=2.2.4
 Flask==2.2.5
 joblib==1.4.2
 requests==2.32.3
