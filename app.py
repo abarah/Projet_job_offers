@@ -15,7 +15,7 @@ from flask import Flask,render_template,redirect,request,session
 from resume_screening import resparser, match
 from lxml import html
 
-nlp = spacy.load('fr_core_web_sm')
+
 
 
 
@@ -28,7 +28,12 @@ location=''
 InternType=''
 app.secret_key = 'secret'
 
-
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    from spacy.cli import download
+    download("en_core_web_sm")
+    nlp = spacy.load("en_core_web_sm")
 
 # Connexion à Cassandra
 from cassandra.cluster import Cluster
