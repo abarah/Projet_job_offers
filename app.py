@@ -1,4 +1,5 @@
 import re
+import nltk
 from cassandra.cluster import Cluster
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
