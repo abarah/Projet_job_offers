@@ -1,5 +1,6 @@
+setuptools>=58.0.0
 cassandra-driver== 3.29.2
-spacy==2.3.5
+spacy
 Flask==2.2.5
 joblib==1.4.2
 requests==2.32.3
