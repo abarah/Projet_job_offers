@@ -134,7 +134,19 @@
 
     <!-- Section des résultats -->
     <div id="result" class="job_recommendation">
-      <h1>saida</h1>
+      {% for row in row_data %}
+      <div class="job_card">
+        <h3 class="job_title">{{ row[0] }}</h3>
+        <p class="job_company">{{ row[1] }}</p>
+        <p class="job_match">{{ row[2] }}</p>
+        <p class="job_contrat">{{ row[4] }}</p>
+        <p class="job_location">{{ row[5] }}</p>
+        <a href="{{ row[3] }}" target="_blank">
+          <button class="btn_apply">Postuler</button>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
   </div>
 
   <script>
