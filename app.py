@@ -93,8 +93,8 @@ def job_recommendations():
         cvPath = os.path.join(app.instance_path, 'resume_files', f.filename)
         f.save(cvPath)
     with open('joboffers-token.json', "r") as f:
-    creds = json.load(f)
-    ASTRA_DB_APPLICATION_TOKEN = creds["token"]
+        creds = json.load(f)
+        ASTRA_DB_APPLICATION_TOKEN = creds["token"]
 
     cluster = Cluster(
         cloud={
