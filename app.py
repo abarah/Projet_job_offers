@@ -120,7 +120,7 @@ def job_recommendations():
         (row.title, row.company, row.skills_match, row.link, row.contract_type, row.location)
         for row in rows
     ]
-    print(row_dat)
+    print(row_data)
     # Passer les données au template HTML
     return render_template(
         'upload.html',
