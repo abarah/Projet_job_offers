@@ -131,6 +131,42 @@ def job_recommendations():
 @app.route('/submit2', methods=['POST'])
 def submit_data_filtre():
     if request.method == 'POST':
+        # Créer les tables si elles n'existent pas
+        with open('joboffers-token.json', "r") as f:
+            creds = json.load(f)
+            ASTRA_DB_APPLICATION_TOKEN = creds["token"]
+
+        cluster = Cluster(
+            cloud={
+                "secure_connect_bundle": 'secure-connect-joboffers.zip',
+            },
+            auth_provider=PlainTextAuthProvider(
+                "token",
+                ASTRA_DB_APPLICATION_TOKEN,
+            ),
+        )
+
+        session_cassandra = cluster.connect('jobscraping')
+                    session_cassandra.execute("""
+                        CREATE TABLE IF NOT EXISTS job_offers (
+                            title TEXT,
+                            company TEXT,
+                            location TEXT,
+                            link TEXT PRIMARY KEY
+                        )
+                    """)
+        session_cassandra.execute("""
+            CREATE TABLE IF NOT EXISTS job_details (
+                title TEXT,
+                company TEXT,
+                location TEXT,
+                link TEXT PRIMARY KEY,
+                description TEXT,
+                min_salary INT,
+                max_salary INT,
+                contract_type TEXT
+            )
+        """)
         # Récupération des filtres depuis le formulaire
         location_filter = request.form.get('location', '').strip()
         contract_filter = request.form.get('contract', '').strip()
