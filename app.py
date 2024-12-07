@@ -27,21 +27,7 @@ from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 import json
 
-with open('joboffers-token.json', "r") as f:
-    creds = json.load(f)
-    ASTRA_DB_APPLICATION_TOKEN = creds["token"]
 
-cluster = Cluster(
-    cloud={
-        "secure_connect_bundle": 'secure-connect-joboffers.zip',
-    },
-    auth_provider=PlainTextAuthProvider(
-        "token",
-        ASTRA_DB_APPLICATION_TOKEN,
-    ),
-)
-
-session_cassandra = cluster.connect('jobscraping')
 
 # Initialiser le driver Selenium
 #service = Service(r'.\\chromedriver-win64\\chromedriver.exe')
@@ -106,6 +92,21 @@ def job_recommendations():
         f = request.files['userfile']
         cvPath = os.path.join(app.instance_path, 'resume_files', f.filename)
         f.save(cvPath)
+    with open('joboffers-token.json', "r") as f:
+    creds = json.load(f)
+    ASTRA_DB_APPLICATION_TOKEN = creds["token"]
+
+    cluster = Cluster(
+        cloud={
+            "secure_connect_bundle": 'secure-connect-joboffers.zip',
+        },
+        auth_provider=PlainTextAuthProvider(
+            "token",
+            ASTRA_DB_APPLICATION_TOKEN,
+        ),
+    )
+    
+    session_cassandra = cluster.connect('jobscraping')
 
         # Ajoutez ici toute la logique pour générer les recommandations et les insérer dans Cassandra, comme dans la fonction précédente.
 
