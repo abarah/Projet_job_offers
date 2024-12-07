@@ -147,14 +147,14 @@ def submit_data_filtre():
         )
 
         session_cassandra = cluster.connect('jobscraping')
-                    session_cassandra.execute("""
+        session_cassandra.execute("""
                         CREATE TABLE IF NOT EXISTS job_offers (
                             title TEXT,
                             company TEXT,
                             location TEXT,
                             link TEXT PRIMARY KEY
                         )
-                    """)
+        """)
         session_cassandra.execute("""
             CREATE TABLE IF NOT EXISTS job_details (
                 title TEXT,
