@@ -112,7 +112,7 @@ def job_recommendations():
     # Récupérer les données de la base Cassandra
     query = "SELECT title, company, skills_match, link, contract_type, location FROM job_recommended"
     rows = session_cassandra.execute(query)
-
+    print(query)
     # Transformer les résultats en une liste pour le template
     row_data = [
         (row.title, row.company, row.skills_match, row.link, row.contract_type, row.location)
