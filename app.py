@@ -35,27 +35,7 @@ import json
 
 
 
-# Créer les tables si elles n'existent pas
-session_cassandra.execute("""
-    CREATE TABLE IF NOT EXISTS job_offers (
-        title TEXT,
-        company TEXT,
-        location TEXT,
-        link TEXT PRIMARY KEY
-    )
-""")
-session_cassandra.execute("""
-    CREATE TABLE IF NOT EXISTS job_details (
-        title TEXT,
-        company TEXT,
-        location TEXT,
-        link TEXT PRIMARY KEY,
-        description TEXT,
-        min_salary INT,
-        max_salary INT,
-        contract_type TEXT
-    )
-""")
+
 
 
 
@@ -107,8 +87,29 @@ def job_recommendations():
     )
     
     session_cassandra = cluster.connect('jobscraping')
+    # Créer les tables si elles n'existent pas
+    session_cassandra.execute("""
+        CREATE TABLE IF NOT EXISTS job_offers (
+            title TEXT,
+            company TEXT,
+            location TEXT,
+            link TEXT PRIMARY KEY
+        )
+     """)
+    session_cassandra.execute("""
+        CREATE TABLE IF NOT EXISTS job_details (
+            title TEXT,
+            company TEXT,
+            location TEXT,
+            link TEXT PRIMARY KEY,
+            description TEXT,
+            min_salary INT,
+            max_salary INT,
+            contract_type TEXT
+        )
+     """)
 
-        # Ajoutez ici toute la logique pour générer les recommandations et les insérer dans Cassandra, comme dans la fonction précédente.
+    # Ajoutez ici toute la logique pour générer les recommandations et les insérer dans Cassandra, comme dans la fonction précédente.
 
     # Récupérer les données de la base Cassandra
     query = "SELECT title, company, skills_match, link, contract_type, location FROM job_recommended"
