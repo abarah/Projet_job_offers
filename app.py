@@ -120,7 +120,7 @@ def job_recommendations():
         (row.title, row.company, row.skills_match, row.link, row.contract_type, row.location)
         for row in rows
     ]
-    print(row_data)
+    
     # Passer les données au template HTML
     return render_template(
         'upload.html',
@@ -268,7 +268,7 @@ def manage_job_offers():
         (row.title, row.company, row.location, row.description,row.link,row.min_salary,row.max_salary,row.contract_type)
         for row in rows
     ]
-    print(job_offers)
+    
     return render_template('manage_job_offers.html', job_offers=job_offers)
 @app.route('/edit_job_offer/<title>', methods=['GET', 'POST'])
 def edit_job_offer(title):
