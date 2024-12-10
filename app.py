@@ -271,7 +271,7 @@ def manage_job_offers():
     print(job_offers)
     return render_template('manage_job_offers.html', job_offers=job_offers)
 @app.route('/edit_job_offer/<title>', methods=['GET', 'POST'])
-def edit_job_offer(link):
+def edit_job_offer(title):
     if request.method == 'POST':
         # Récupérer les données du formulaire
         link = request.form['link']
