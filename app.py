@@ -270,6 +270,38 @@ def manage_job_offers():
     ]
     print(job_offers)
     return render_template('manage_job_offers.html', job_offers=job_offers)
+@app.route('/edit_job_offer/<link>', methods=['GET', 'POST'])
+def edit_job_offer(link):
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        title = request.form['title']
+        company = request.form['company']
+        location = request.form['location']
+        description = request.form['description']
+        min_salary = int(request.form['min_salary'])
+        max_salary = int(request.form['max_salary'])
+        contract_type = request.form['contract_type']
+
+        # Mettre à jour l'offre dans la base de données en utilisant le 'link' comme identifiant
+        query = """
+            UPDATE job_details
+            SET title = %s, company = %s, location = %s, description = %s, min_salary = %s, max_salary = %s, contract_type = %s
+            WHERE link = %s
+        """
+        session_cassandra.execute(query, (title, company, location, description, min_salary, max_salary, contract_type, link))
+
+        # Retourner à la page de gestion des offres après modification
+        return redirect(url_for('manage_job_offers'))
+
+    # Récupérer les informations de l'offre à modifier en utilisant 'link'
+    query = "SELECT * FROM job_details WHERE link = %s"
+    row = session_cassandra.execute(query, (link,)).one()
+    
+    if row:
+        return render_template('edit_job_offer.html', offer=row)
+    else:
+        return "Offre d'emploi non trouvée", 404
+
     
 
 
