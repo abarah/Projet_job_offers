@@ -270,11 +270,11 @@ def manage_job_offers():
     ]
     print(job_offers)
     return render_template('manage_job_offers.html', job_offers=job_offers)
-@app.route('/edit_job_offer/<link>', methods=['GET', 'POST'])
+@app.route('/edit_job_offer/<title>', methods=['GET', 'POST'])
 def edit_job_offer(link):
     if request.method == 'POST':
         # Récupérer les données du formulaire
-        title = request.form['title']
+        link = request.form['link']
         company = request.form['company']
         location = request.form['location']
         description = request.form['description']
@@ -285,17 +285,17 @@ def edit_job_offer(link):
         # Mettre à jour l'offre dans la base de données en utilisant le 'link' comme identifiant
         query = """
             UPDATE job_details
-            SET title = %s, company = %s, location = %s, description = %s, min_salary = %s, max_salary = %s, contract_type = %s
-            WHERE link = %s
+            SET company = %s, location = %s, description = %s, min_salary = %s, max_salary = %s, contract_type = %s , link=%s
+            WHERE title = %s
         """
-        session_cassandra.execute(query, (title, company, location, description, min_salary, max_salary, contract_type, link))
+        session_cassandra.execute(query, (title, company, location, description,link, min_salary, max_salary, contract_type)
 
         # Retourner à la page de gestion des offres après modification
         return redirect(url_for('manage_job_offers'))
 
     # Récupérer les informations de l'offre à modifier en utilisant 'link'
-    query = "SELECT * FROM job_details WHERE link = %s"
-    row = session_cassandra.execute(query, (link,)).one()
+    query = "SELECT * FROM job_details WHERE title = %s"
+    row = session_cassandra.execute(query, (title)).one()
     
     if row:
         return render_template('edit_job_offer.html', offer=row)
