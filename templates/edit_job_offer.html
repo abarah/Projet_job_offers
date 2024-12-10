@@ -10,25 +10,25 @@
 
     <form method="POST">
         <label for="title">Titre :</label>
-        <input type="text" name="title" value="{{ offer.title }}" required><br><br>
+        <input type="text" name="title" value="{{ offer[0] }}" required><br><br>
 
         <label for="company">Entreprise :</label>
-        <input type="text" name="company" value="{{ offer.company }}" required><br><br>
+        <input type="text" name="company" value="{{ offer[1] }}" required><br><br>
 
         <label for="location">Localisation :</label>
-        <input type="text" name="location" value="{{ offer.location }}" required><br><br>
+        <input type="text" name="location" value="{{ offer[2]}}" required><br><br>
 
         <label for="description">Description :</label>
-        <textarea name="description" required>{{ offer.description }}</textarea><br><br>
+        <textarea name="description" required>{{ offer[3]}}</textarea><br><br>
 
         <label for="min_salary">Salaire Min :</label>
-        <input type="number" name="min_salary" value="{{ offer.min_salary }}" required><br><br>
+        <input type="number" name="min_salary" value="{{ offer[5] }}" required><br><br>
 
         <label for="max_salary">Salaire Max :</label>
-        <input type="number" name="max_salary" value="{{ offer.max_salary }}" required><br><br>
+        <input type="number" name="max_salary" value="{{ offer[6] }}" required><br><br>
 
         <label for="contract_type">Type de contrat :</label>
-        <input type="text" name="contract_type" value="{{ offer.contract_type }}" required><br><br>
+        <input type="text" name="contract_type" value="{{ offer[7]}}" required><br><br>
 
         <button type="submit">Mettre à jour l'offre</button>
     </form>
