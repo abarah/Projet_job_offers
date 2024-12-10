@@ -22,16 +22,16 @@
             </tr>
         </thead>
         <tbody>
-            {% for offer in job_offers %}
+            {% for row in job_offers %}
             <tr>
-                <td>{{ offer.title }}</td>
-                <td>{{ offer.company }}</td>
-                <td>{{ offer.location }}</td>
-                <td>{{ offer.description }}</td>
-                <td>{{ offer.link}}</td>
-                <td>{{ offer.min_salary }}</td>
-                <td>{{ offer.max_salary }}</td>
-                <td>{{ offer.contract_type }}</td>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+                <td>{{ row[5] }}</td>
+                <td>{{ row[6] }}</td>
+                <td>{{ row[7] }}</td>
                 <td>
                     <!-- Bouton pour éditer l'offre -->
                     <a href="#">Modifier</a> |
