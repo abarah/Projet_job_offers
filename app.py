@@ -268,9 +268,9 @@ def manage_job_offers():
         (row.title, row.company, row.location, row.description,row.link,row.min_salary,row.max_salary,row.contract_type)
         for row in rows
     ]
-    
+    print(job_offers)
     return render_template('manage_job_offers.html', job_offers=job_offers)
-
+    
 
 
 if __name__ == "__main__":
