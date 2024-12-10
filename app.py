@@ -219,6 +219,13 @@ def submit_data_filtre():
             link_column="Lien",
             zip=zip
         )
+@app.route('/manage_job_offers', methods=['GET'])
+def manage_job_offers():
+    # Récupérer toutes les offres d'emploi
+    query = "SELECT * FROM job_details"
+    rows = session_cassandra.execute(query)
+    job_offers = [dict(row) for row in rows]
+    return render_template('manage_job_offers.html', job_offers=job_offers)
 
 
 
