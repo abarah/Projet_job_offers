@@ -265,7 +265,7 @@ def manage_job_offers():
     query = "SELECT * FROM job_details"
     rows = session_cassandra.execute(query)
     job_offers = [
-        (row.title, row.company, row.location, row.description,row.link,row.min_salary,row.max_salary,row.contrat_type)
+        (row.title, row.company, row.location, row.description,row.link,row.min_salary,row.max_salary,row.contract_type)
         for row in rows
     ]
     
