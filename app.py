@@ -295,7 +295,7 @@ def edit_job_offer(link):
 
     # Récupérer les informations de l'offre à modifier en utilisant 'link'
     query = "SELECT * FROM job_details WHERE title = %s"
-    row = session_cassandra.execute(query, (title)).one()
+    row = session_cassandra.execute(query, (title,)).one()
     
     if row:
         return render_template('edit_job_offer.html', offer=row)
