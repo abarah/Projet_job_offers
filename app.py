@@ -222,6 +222,46 @@ def submit_data_filtre():
 @app.route('/manage_job_offers', methods=['GET'])
 def manage_job_offers():
     # Récupérer toutes les offres d'emploi
+    if request.method == 'POST':        
+        f = request.files['userfile']
+        cvPath = os.path.join(app.instance_path, 'resume_files', f.filename)
+        f.save(cvPath)
+    with open('joboffers-token.json', "r") as f:
+        creds = json.load(f)
+        ASTRA_DB_APPLICATION_TOKEN = creds["token"]
+
+    cluster = Cluster(
+        cloud={
+            "secure_connect_bundle": 'secure-connect-joboffers.zip',
+        },
+        auth_provider=PlainTextAuthProvider(
+            "token",
+            ASTRA_DB_APPLICATION_TOKEN,
+        ),
+    )
+    
+    session_cassandra = cluster.connect('jobscraping')
+    # Créer les tables si elles n'existent pas
+    session_cassandra.execute("""
+        CREATE TABLE IF NOT EXISTS job_offers (
+            title TEXT,
+            company TEXT,
+            location TEXT,
+            link TEXT PRIMARY KEY
+        )
+     """)
+    session_cassandra.execute("""
+        CREATE TABLE IF NOT EXISTS job_details (
+            title TEXT,
+            company TEXT,
+            location TEXT,
+            link TEXT PRIMARY KEY,
+            description TEXT,
+            min_salary INT,
+            max_salary INT,
+            contract_type TEXT
+        )
+     """)
     query = "SELECT * FROM job_details"
     rows = session_cassandra.execute(query)
     job_offers = [dict(row) for row in rows]
