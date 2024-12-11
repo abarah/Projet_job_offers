@@ -306,6 +306,16 @@ def edit_job_offer(job_id):
         return "Offre d'emploi non trouvée", 404
 @app.route('/add_job_offer', methods=['GET', 'POST'])
 def add_job_offer():
+    with open('joboffers-token.json', "r") as f:
+        creds = json.load(f)
+        ASTRA_DB_APPLICATION_TOKEN = creds["token"]
+
+    cluster = Cluster(
+        cloud={"secure_connect_bundle": 'secure-connect-joboffers.zip'},
+        auth_provider=PlainTextAuthProvider("token", ASTRA_DB_APPLICATION_TOKEN),
+    )
+    
+    session_cassandra = cluster.connect('jobscraping')
     if request.method == 'POST':
         # Récupérer les données du formulaire
         title = request.form['title']
@@ -322,7 +332,7 @@ def add_job_offer():
 
         # Ajouter l'offre à la base de données
         query = """
-            INSERT INTO job_details_new (id, title, company, location, description, link, min_salary, max_salary, contract_type)
+            INSERT INTO job_details_new (job_id, title, company, location, description, link, min_salary, max_salary, contract_type)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         session_cassandra.execute(query, (job_id, title, company, location, description, link, min_salary, max_salary, contract_type))
@@ -334,7 +344,7 @@ def add_job_offer():
 @app.route('/delete_job_offer/<uuid:job_id>', methods=['GET'])
 def delete_job_offer(job_id):
     # Supprimer l'offre de la base de données
-    query = "DELETE FROM job_details_new WHERE id = %s"
+    query = "DELETE FROM job_details_new WHERE job_id = %s"
     session_cassandra.execute(query, (job_id,))
 
     # Rediriger vers la page de gestion des offres après suppression
