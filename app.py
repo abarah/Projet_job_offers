@@ -287,15 +287,8 @@ def edit_job_offer(title):
     )
     
     session_cassandra = cluster.connect('jobscraping')
+
     # Créer les tables si elles n'existent pas
-    session_cassandra.execute("""
-        CREATE TABLE IF NOT EXISTS job_offers (
-            title TEXT,
-            company TEXT,
-            location TEXT,
-            link TEXT PRIMARY KEY
-        )
-     """)
     session_cassandra.execute("""
         CREATE TABLE IF NOT EXISTS job_details (
             title TEXT,
@@ -308,6 +301,7 @@ def edit_job_offer(title):
             contract_type TEXT
         )
      """)
+
     if request.method == 'POST':
         # Récupérer les données du formulaire
         link = request.form['link']
@@ -318,28 +312,26 @@ def edit_job_offer(title):
         max_salary = int(request.form['max_salary'])
         contract_type = request.form['contract_type']
 
-        # Mettre à jour l'offre dans la base de données en utilisant le 'link' comme identifiant
+        # Mettre à jour l'offre dans la base de données en utilisant le 'title' comme identifiant
         query = """
             UPDATE job_details
-            SET company = %s, location = %s, description = %s, min_salary = %s, max_salary = %s, contract_type = %s , link=%s
+            SET company = %s, location = %s, description = %s, min_salary = %s, max_salary = %s, contract_type = %s, link = %s
             WHERE title = %s
         """
-        print(query)
-        session_cassandra.execute(query,(title, company, location, description,link, min_salary, max_salary, contract_type))
+        session_cassandra.execute(query, (company, location, description, min_salary, max_salary, contract_type, link, title))
 
         # Retourner à la page de gestion des offres après modification
         return redirect(url_for('manage_job_offers'))
 
-    # Récupérer les informations de l'offre à modifier en utilisant 'link'
+    # Récupérer les informations de l'offre à modifier en utilisant 'title'
     query = "SELECT * FROM job_details WHERE title = %s"
     row = session_cassandra.execute(query, (title,)).one()
-    
+
     if row:
         return render_template('edit_job_offer.html', offer=row)
     else:
         return "Offre d'emploi non trouvée", 404
 
-    
 
 
 if __name__ == "__main__":
