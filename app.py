@@ -249,19 +249,6 @@ def manage_job_offers():
         )
     """)
 
-    # Récupérer les anciennes données
-    query = "SELECT * FROM job_details"
-    rows = session_cassandra.execute(query)
-
-    # Insérer les anciennes données dans la nouvelle table avec un UUID
-    for row in rows:
-        id = uuid.uuid4() # Générer un UUID unique
-        query = """
-            INSERT INTO job_details_new (id, title, company, location, description, link, min_salary, max_salary, contract_type)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        session_cassandra.execute(query, (id, row.title, row.company, row.location, row.description, row.link, row.min_salary, row.max_salary, row.contract_type))
-
     # Récupérer les nouvelles données depuis job_details_new
     query = "SELECT * FROM job_details_new"
     rows = session_cassandra.execute(query)
