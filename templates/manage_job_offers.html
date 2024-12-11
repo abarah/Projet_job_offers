@@ -83,17 +83,17 @@
         <tbody>
             {% for row in job_offers %}
             <tr>
-                <td>{{ row[0] }}</td>
                 <td>{{ row[1] }}</td>
                 <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
         
-                <td><a href="{{ row[4] }}">Link</a></td>
-                <td>{{ row[5] }}</td>
+                <td><a href="{{ row[5] }}">Link</a></td>
                 <td>{{ row[6] }}</td>
                 <td>{{ row[7] }}</td>
+                <td>{{ row[8] }}</td>
                 <td>
                     <!-- Bouton pour éditer l'offre -->
-                    <a href="{{ url_for('edit_job_offer', title=row[0] )}}">Modifier</a>
+                    <a href="{{ url_for('edit_job_offer', job_id=row[0] )}}">Modifier</a>
                     <!-- Bouton pour supprimer l'offre -->
                     <a href="#" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">Supprimer</a>
                 </td>
