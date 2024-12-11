@@ -1,5 +1,5 @@
 pip==24.3.1
-pyuuid
+uuid
 cassandra-driver== 3.29.2
 Flask==2.2.5
 requests==2.32.3
