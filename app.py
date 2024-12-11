@@ -272,6 +272,42 @@ def manage_job_offers():
     return render_template('manage_job_offers.html', job_offers=job_offers)
 @app.route('/edit_job_offer/<title>', methods=['GET', 'POST'])
 def edit_job_offer(title):
+    with open('joboffers-token.json', "r") as f:
+        creds = json.load(f)
+        ASTRA_DB_APPLICATION_TOKEN = creds["token"]
+
+    cluster = Cluster(
+        cloud={
+            "secure_connect_bundle": 'secure-connect-joboffers.zip',
+        },
+        auth_provider=PlainTextAuthProvider(
+            "token",
+            ASTRA_DB_APPLICATION_TOKEN,
+        ),
+    )
+    
+    session_cassandra = cluster.connect('jobscraping')
+    # Créer les tables si elles n'existent pas
+    session_cassandra.execute("""
+        CREATE TABLE IF NOT EXISTS job_offers (
+            title TEXT,
+            company TEXT,
+            location TEXT,
+            link TEXT PRIMARY KEY
+        )
+     """)
+    session_cassandra.execute("""
+        CREATE TABLE IF NOT EXISTS job_details (
+            title TEXT,
+            company TEXT,
+            location TEXT,
+            link TEXT PRIMARY KEY,
+            description TEXT,
+            min_salary INT,
+            max_salary INT,
+            contract_type TEXT
+        )
+     """)
     if request.method == 'POST':
         # Récupérer les données du formulaire
         link = request.form['link']
