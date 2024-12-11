@@ -304,6 +304,42 @@ def edit_job_offer(job_id):
         return render_template('edit_job_offer.html', offer=row)
     else:
         return "Offre d'emploi non trouvée", 404
+@app.route('/add_job_offer', methods=['GET', 'POST'])
+def add_job_offer():
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        title = request.form['title']
+        company = request.form['company']
+        location = request.form['location']
+        description = request.form['description']
+        link = request.form['link']
+        min_salary = int(request.form['min_salary'])
+        max_salary = int(request.form['max_salary'])
+        contract_type = request.form['contract_type']
+
+        # Générer un UUID pour la nouvelle offre
+        job_id = uuid4()
+
+        # Ajouter l'offre à la base de données
+        query = """
+            INSERT INTO job_details_new (id, title, company, location, description, link, min_salary, max_salary, contract_type)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        session_cassandra.execute(query, (job_id, title, company, location, description, link, min_salary, max_salary, contract_type))
+
+        # Rediriger vers la page de gestion des offres
+        return redirect(url_for('manage_job_offers'))
+
+    return render_template('add_job_offer.html')
+@app.route('/delete_job_offer/<uuid:job_id>', methods=['GET'])
+def delete_job_offer(job_id):
+    # Supprimer l'offre de la base de données
+    query = "DELETE FROM job_details_new WHERE id = %s"
+    session_cassandra.execute(query, (job_id,))
+
+    # Rediriger vers la page de gestion des offres après suppression
+    return redirect(url_for('manage_job_offers'))
+
 
 # Lancer l'application Flask
 if __name__ == '__main__':
