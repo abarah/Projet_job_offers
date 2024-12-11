@@ -343,6 +343,16 @@ def add_job_offer():
     return render_template('add_job_offer.html')
 @app.route('/delete_job_offer/<uuid:job_id>', methods=['GET'])
 def delete_job_offer(job_id):
+    with open('joboffers-token.json', "r") as f:
+        creds = json.load(f)
+        ASTRA_DB_APPLICATION_TOKEN = creds["token"]
+
+    cluster = Cluster(
+        cloud={"secure_connect_bundle": 'secure-connect-joboffers.zip'},
+        auth_provider=PlainTextAuthProvider("token", ASTRA_DB_APPLICATION_TOKEN),
+    )
+    
+    session_cassandra = cluster.connect('jobscraping')
     # Supprimer l'offre de la base de données
     query = "DELETE FROM job_details_new WHERE job_id = %s"
     session_cassandra.execute(query, (job_id,))
