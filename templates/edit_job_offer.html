@@ -6,33 +6,37 @@
     <title>Modifier l'Offre d'Emploi</title>
 </head>
 <body>
-    <h1>Modifier l'Offre d'Emploi</h1>
+    <h1>Modifier l'Offre d'Emploi : {{ offer.title }}</h1>
 
-    <form method="POST">
+    <form action="{{ url_for('edit_job_offer', job_id=offer.id) }}" method="POST">
         <label for="title">Titre :</label>
-        <input type="text" name="title" value="{{ offer[1] }}" required><br><br>
+        <input type="text" id="title" name="title" value="{{ offer.title }}" required><br>
 
         <label for="company">Entreprise :</label>
-        <input type="text" name="company" value="{{ offer[2] }}" required><br><br>
+        <input type="text" id="company" name="company" value="{{ offer.company }}" required><br>
 
         <label for="location">Localisation :</label>
-        <input type="text" name="location" value="{{ offer[3]}}" required><br><br>
+        <input type="text" id="location" name="location" value="{{ offer.location }}" required><br>
 
         <label for="description">Description :</label>
-        <textarea name="description" required>{{ offer[4]}}</textarea><br><br>
+        <textarea id="description" name="description" required>{{ offer.description }}</textarea><br>
+
+        <label for="link">Lien :</label>
+        <input type="text" id="link" name="link" value="{{ offer.link }}" required><br>
 
         <label for="min_salary">Salaire Min :</label>
-        <input type="number" name="min_salary" value="{{ offer[6] }}" required><br><br>
+        <input type="number" id="min_salary" name="min_salary" value="{{ offer.min_salary }}" required><br>
 
         <label for="max_salary">Salaire Max :</label>
-        <input type="number" name="max_salary" value="{{ offer[7] }}" required><br><br>
+        <input type="number" id="max_salary" name="max_salary" value="{{ offer.max_salary }}" required><br>
 
         <label for="contract_type">Type de contrat :</label>
-        <input type="text" name="contract_type" value="{{ offer[8]}}" required><br><br>
+        <input type="text" id="contract_type" name="contract_type" value="{{ offer.contract_type }}" required><br>
 
-        <button type="submit">Mettre à jour l'offre</button>
+        <button type="submit">Modifier l'offre</button>
     </form>
 
+    <br>
     <a href="{{ url_for('manage_job_offers') }}">Retour à la gestion des offres</a>
 </body>
 </html>
