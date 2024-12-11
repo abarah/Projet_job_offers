@@ -272,8 +272,7 @@ def manage_job_offers():
     return render_template('manage_job_offers.html', job_offers=job_offers)
 @app.route('/edit_job_offer/<title>', methods=['GET', 'POST'])
 def edit_job_offer(title):
-    from urllib.parse import unquote
-    title = unquote(title)
+   
     print(f"Decoded title: {title}")  # Debugging
     
     with open('joboffers-token.json', "r") as f:
