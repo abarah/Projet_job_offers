@@ -6,7 +6,7 @@ import os
 import pandas as pd
 from flask import Flask,render_template,redirect,request,session
 from lxml import html
-import pyuuid
+import uuid
 
 
 
@@ -255,7 +255,7 @@ def manage_job_offers():
 
     # Insérer les anciennes données dans la nouvelle table avec un UUID
     for row in rows:
-        id = pyuuid.uuid4()  # Générer un UUID unique
+        id = uuid.uuid4() # Générer un UUID unique
         query = """
             INSERT INTO job_details_new (id, title, company, location, description, link, min_salary, max_salary, contract_type)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
