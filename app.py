@@ -318,7 +318,7 @@ def add_job_offer():
         contract_type = request.form['contract_type']
 
         # Générer un UUID pour la nouvelle offre
-        job_id = uuid4()
+        job_id =uuid.uuid4()
 
         # Ajouter l'offre à la base de données
         query = """
