@@ -6,6 +6,8 @@ import os
 import pandas as pd
 from flask import Flask,render_template,redirect,request,session
 from lxml import html
+from cassandra.util import uuid4
+
 
 
 
@@ -221,119 +223,103 @@ def submit_data_filtre():
         )
 @app.route('/manage_job_offers', methods=['GET'])
 def manage_job_offers():
-    # Récupérer toutes les offres d'emploi
-    if request.method == 'POST':        
-        f = request.files['userfile']
-        cvPath = os.path.join(app.instance_path, 'resume_files', f.filename)
-        f.save(cvPath)
     with open('joboffers-token.json', "r") as f:
         creds = json.load(f)
         ASTRA_DB_APPLICATION_TOKEN = creds["token"]
 
     cluster = Cluster(
-        cloud={
-            "secure_connect_bundle": 'secure-connect-joboffers.zip',
-        },
-        auth_provider=PlainTextAuthProvider(
-            "token",
-            ASTRA_DB_APPLICATION_TOKEN,
-        ),
+        cloud={"secure_connect_bundle": 'secure-connect-joboffers.zip'},
+        auth_provider=PlainTextAuthProvider("token", ASTRA_DB_APPLICATION_TOKEN),
     )
     
     session_cassandra = cluster.connect('jobscraping')
-    # Créer les tables si elles n'existent pas
+
+    # Créer la nouvelle table avec un UUID si elle n'existe pas
     session_cassandra.execute("""
-        CREATE TABLE IF NOT EXISTS job_offers (
+        CREATE TABLE IF NOT EXISTS job_details_new (
+            id UUID PRIMARY KEY,
             title TEXT,
             company TEXT,
             location TEXT,
-            link TEXT PRIMARY KEY
-        )
-     """)
-    session_cassandra.execute("""
-        CREATE TABLE IF NOT EXISTS job_details (
-            title TEXT,
-            company TEXT,
-            location TEXT,
-            link TEXT PRIMARY KEY,
             description TEXT,
+            link TEXT,
             min_salary INT,
             max_salary INT,
             contract_type TEXT
         )
-     """)
+    """)
+
+    # Récupérer les anciennes données
     query = "SELECT * FROM job_details"
     rows = session_cassandra.execute(query)
+
+    # Insérer les anciennes données dans la nouvelle table avec un UUID
+    for row in rows:
+        id = uuid4()  # Générer un UUID unique
+        query = """
+            INSERT INTO job_details_new (id, title, company, location, description, link, min_salary, max_salary, contract_type)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        session_cassandra.execute(query, (id, row.title, row.company, row.location, row.description, row.link, row.min_salary, row.max_salary, row.contract_type))
+
+    # Récupérer les nouvelles données depuis job_details_new
+    query = "SELECT * FROM job_details_new"
+    rows = session_cassandra.execute(query)
     job_offers = [
-        (row.title, row.company, row.location, row.description,row.link,row.min_salary,row.max_salary,row.contract_type)
+        (row.id, row.title, row.company, row.location, row.description, row.link, row.min_salary, row.max_salary, row.contract_type)
         for row in rows
     ]
     
     return render_template('manage_job_offers.html', job_offers=job_offers)
-@app.route('/edit_job_offer/<title>', methods=['GET', 'POST'])
-def edit_job_offer(title):
-   
-    print(f"Decoded title: {title}")  # Debugging
-    
+
+# Route pour éditer une offre d'emploi
+@app.route('/edit_job_offer/<uuid:job_id>', methods=['GET', 'POST'])
+def edit_job_offer(job_id):
     with open('joboffers-token.json', "r") as f:
         creds = json.load(f)
         ASTRA_DB_APPLICATION_TOKEN = creds["token"]
 
     cluster = Cluster(
-        cloud={
-            "secure_connect_bundle": 'secure-connect-joboffers.zip',
-        },
-        auth_provider=PlainTextAuthProvider(
-            "token",
-            ASTRA_DB_APPLICATION_TOKEN,
-        ),
+        cloud={"secure_connect_bundle": 'secure-connect-joboffers.zip'},
+        auth_provider=PlainTextAuthProvider("token", ASTRA_DB_APPLICATION_TOKEN),
     )
     
     session_cassandra = cluster.connect('jobscraping')
 
-    # Créer les tables si elles n'existent pas
-    session_cassandra.execute("""
-        CREATE TABLE IF NOT EXISTS job_details (
-            title TEXT,
-            company TEXT,
-            location TEXT,
-            link TEXT PRIMARY KEY,
-            description TEXT,
-            min_salary INT,
-            max_salary INT,
-            contract_type TEXT
-        )
-     """)
-
     if request.method == 'POST':
         # Récupérer les données du formulaire
-        link = request.form['link']
+        title = request.form['title']
         company = request.form['company']
         location = request.form['location']
         description = request.form['description']
+        link = request.form['link']
         min_salary = int(request.form['min_salary'])
         max_salary = int(request.form['max_salary'])
         contract_type = request.form['contract_type']
 
-        # Mettre à jour l'offre dans la base de données en utilisant le 'title' comme identifiant
+        # Mettre à jour l'offre dans la base de données en utilisant l'ID (UUID) comme identifiant
         query = """
-            UPDATE job_details
-            SET company = %s, location = %s, description = %s, min_salary = %s, max_salary = %s, contract_type = %s, link = %s
-            WHERE title = %s
+            UPDATE job_details_new
+            SET title = %s, company = %s, location = %s, description = %s, link = %s, min_salary = %s, max_salary = %s, contract_type = %s
+            WHERE id = %s
         """
-        session_cassandra.execute(query, (company, location, description, min_salary, max_salary, contract_type, link, title))
+        session_cassandra.execute(query, (title, company, location, description, link, min_salary, max_salary, contract_type, job_id))
 
         # Retourner à la page de gestion des offres après modification
         return redirect(url_for('manage_job_offers'))
 
-    # Récupérer les informations de l'offre à modifier en utilisant 'title'
-    query = "SELECT * FROM job_details WHERE title = %s"
-    row = session_cassandra.execute(query, (title,)).one()
+    # Récupérer les informations de l'offre à modifier en utilisant 'job_id' (UUID)
+    query = "SELECT * FROM job_details_new WHERE id = %s"
+    row = session_cassandra.execute(query, (job_id,)).one()
 
     if row:
         return render_template('edit_job_offer.html', offer=row)
     else:
         return "Offre d'emploi non trouvée", 404
+
+# Lancer l'application Flask
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 
