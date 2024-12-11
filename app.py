@@ -324,6 +324,7 @@ def edit_job_offer(title):
             SET company = %s, location = %s, description = %s, min_salary = %s, max_salary = %s, contract_type = %s , link=%s
             WHERE title = %s
         """
+        print(query)
         session_cassandra.execute(query,(title, company, location, description,link, min_salary, max_salary, contract_type))
 
         # Retourner à la page de gestion des offres après modification
