@@ -354,7 +354,7 @@ def delete_job_offer(job_id):
     
     session_cassandra = cluster.connect('jobscraping')
     # Supprimer l'offre de la base de données
-    query = "DELETE FROM job_details_new WHERE id = %s"
+    query = "DELETE * FROM job_details_new WHERE id = %s"
     session_cassandra.execute(query, (id,))
 
     # Rediriger vers la page de gestion des offres après suppression
@@ -365,7 +365,3 @@ def delete_job_offer(job_id):
 if __name__ == '__main__':
     app.run(debug=True)
 
-
-
-if __name__ == "__main__":
-    app.run()
