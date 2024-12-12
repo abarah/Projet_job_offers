@@ -328,14 +328,14 @@ def add_job_offer():
         contract_type = request.form['contract_type']
 
         # Générer un UUID pour la nouvelle offre
-        job_id =uuid.uuid4()
+        id =uuid.uuid4()
 
         # Ajouter l'offre à la base de données
         query = """
-            INSERT INTO job_details_new (job_id, title, company, location, description, link, min_salary, max_salary, contract_type)
+            INSERT INTO job_details_new (id, title, company, location, description, link, min_salary, max_salary, contract_type)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        session_cassandra.execute(query, (job_id, title, company, location, description, link, min_salary, max_salary, contract_type))
+        session_cassandra.execute(query, (id, title, company, location, description, link, min_salary, max_salary, contract_type))
 
         # Rediriger vers la page de gestion des offres
         return redirect(url_for('manage_job_offers'))
@@ -354,8 +354,8 @@ def delete_job_offer(job_id):
     
     session_cassandra = cluster.connect('jobscraping')
     # Supprimer l'offre de la base de données
-    query = "DELETE FROM job_details_new WHERE job_id = %s"
-    session_cassandra.execute(query, (job_id,))
+    query = "DELETE FROM job_details_new WHERE id = %s"
+    session_cassandra.execute(query, (id,))
 
     # Rediriger vers la page de gestion des offres après suppression
     return redirect(url_for('manage_job_offers'))
