@@ -353,9 +353,10 @@ def delete_job_offer(job_id):
     )
     
     session_cassandra = cluster.connect('jobscraping')
-    # Supprimer l'offre de la base de données
-    query = "DELETE * FROM job_details_new WHERE id = %s"
-    session_cassandra.execute(query, (job_id))
+    
+    # Supprimer l'offre de la base de données en utilisant l'UUID comme identifiant
+    query = "DELETE FROM job_details_new WHERE id = %s"
+    session_cassandra.execute(query, (job_id,))  # Passer job_id sous forme de tuple avec une virgule
 
     # Rediriger vers la page de gestion des offres après suppression
     return redirect(url_for('manage_job_offers'))
