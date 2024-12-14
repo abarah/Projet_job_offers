@@ -418,3 +418,63 @@ footer {
         font-size: 10px;
     }
 }
+/* Centrer le contenu de la page */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0; /* Fond léger pour contraster */
+}
+
+/* Styles de la carte */
+.blog-card {
+  width: 300px; /* Définir une largeur fixe pour la carte */
+  height: 300px; /* Hauteur égale à la largeur pour faire la carte carrée */
+  background-color: #fff; /* Couleur de fond de la carte */
+  border-radius: 10px; /* Coins arrondis pour un effet plus agréable */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère pour la carte */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Alignement de l'avatar et du texte */
+.author-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.author-avatar {
+  margin-right: 10px;
+}
+
+.card-title {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.card-title p {
+  margin: 0;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
