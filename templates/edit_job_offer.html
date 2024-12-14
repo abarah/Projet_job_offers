@@ -4,6 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier l'Offre d'Emploi</title>
+    <style>
+        <style>
+        /* Variables CSS */
+        :root {
+            --primary-color: #B2A6CE;
+            --secondary-color: #E0D4FC;
+            --bg-color: #f4f4f4;
+            --white: #ffffff;
+            --text-color: #333333;
+            --border-color: #ddd;
+            --button-hover: #ff5b00;
+            --input-bg: #fff;
+            --input-border: #ccc;
+            --input-focus: #ff5c00;
+        }
+
+        /* Mise en page globale */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        h1 {
+            background-color: var(--primary-color);
+            color: var(--white);
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        /* Style du formulaire */
+        form {
+            width: 80%;
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--input-focus);
+            box-shadow: 0 0 5px var(--input-focus);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 10px 20px;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+        }
+
+        /* Lien retour */
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1rem;
+            border: 2px solid var(--primary-color);
+            padding: 8px 20px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.6rem;
+                padding: 15px;
+            }
+
+            form {
+                width: 90%;
+            }
+
+            input, textarea, button {
+                font-size: 0.9rem;
+            }
+
+            a {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    </style>
 </head>
 <body>
     <h1>Modifier l'Offre d'Emploi : {{ offer.title }}</h1>
