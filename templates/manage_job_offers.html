@@ -6,62 +6,151 @@
     <title>Gestion des Offres d'Emploi</title>
 </head>
 <style>
+        /* Variables CSS pour une gestion centralisée des couleurs */
+        :root {
+            --primary-color: #B2A6CE;
+            --secondary-color: #D7C8ED;
+            --bg-color: #f4f4f4;
+            --white: #ffffff;
+            --text-color: #333333;
+            --border-color: #ddd;
+        }
+
+        /* Mise en page générale */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
+
+        /* Header */
         h1 {
-            background-color: #ff7f00;
-            color: white;
+            background-color: var(--secondary-color);
+            color: var(--white);
             padding: 20px;
             text-align: center;
+            margin: 0;
+            font-size: 2.5rem;
         }
+
+        /* Lien Ajouter une offre */
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: var(--white);
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        /* Tableau */
         table {
             width: 90%;
             margin: 30px auto;
             border-collapse: collapse;
-            background-color: white;
+            background-color: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
         }
+
         th {
-            background-color:#FF5C00;
-            color: white;
-            padding: 10px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 12px;
             text-align: left;
+            font-size: 1.1rem;
         }
+
         td {
-            padding: 10px;
+            padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid var(--border-color);
         }
-        a {
-            color: #FF5C00;
+
+        /* Lien dans les cellules */
+        td a {
+            color: var(--primary-color);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: normal;
         }
-        a:hover {
+
+        td a:hover {
             text-decoration: underline;
         }
+
+        /* Cellules actions */
         .actions a {
             margin-right: 10px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background-color: #f1f1f1;
+            color: var(--primary-color);
+            transition: background-color 0.3s ease;
         }
+
+        .actions a:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* Boutons */
         .button {
-            background-color: #FF5C00;
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--white);
             padding: 10px 20px;
             border: none;
             text-align: center;
             text-decoration: none;
             font-size: 16px;
             cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
         }
+
         .button:hover {
             background-color: #ff5b00;
         }
+
+        /* Section centrée */
         .center {
             text-align: center;
             margin-top: 20px;
+        }
+
+        /* Media Queries pour rendre la page responsive */
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
+                font-size: 0.9rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            a {
+                font-size: 1rem;
+                padding: 8px 16px;
+            }
+
+            .actions a {
+                font-size: 0.85rem;
+                padding: 5px 10px;
+            }
         }
     </style>
 <body>
