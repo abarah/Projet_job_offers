@@ -21,7 +21,7 @@
    */
 
   --battleship-gray: hsl(0, 0%, 53%);
-  --viridian-green: hsl(18, 95%, 51%);
+  --viridian-green: #6E5B9A;
   --silver-chalice: hsl(0, 0%, 69%);
   --mikado-yellow: hsl(0, 0%, 0%);
   --granite-gray: hsl(0, 0%, 40%);
@@ -218,69 +218,7 @@ body {
   object-fit: cover;
 }
 
-.card-banner { background: var(--silver-chalice); }
 
-:is(.popular, .blog) .section-subtitle {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-:is(.popular, .blog) .section-title {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-.popular-list,
-.blog-list {
-  display: grid;
-  gap: 30px;
-}
-
-.popular-card,
-.blog-card {
-  box-shadow: 0 10px 30px hsla(0, 0%, 0%, 0.1);
-  border-radius: var(--radius-6);
-  overflow: hidden;
-}
-
-:is(.popular, .blog) .card-banner { position: relative; }
-
-.card-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: var(--mikado-yellow);
-  color: var(--white-1);
-  padding: 14px 10px;
-  border-radius: var(--radius-6);
-}
-
-.card-badge ion-icon {
-  --ionicon-stroke-width: 60px;
-  font-size: 20px;
-  margin-inline: auto;
-}
-
-.card-badge time { font-weight: var(--fw-700); }
-
-:is(.popular, .blog) .card-content { padding: 30px 15px; }
-
-.card-wrapper {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 20px;
-}
-
-:is(.popular, .blog) .card-title {
-  color: var(--granite-gray);
-  font-size: var(--fs-5);
-  margin-block: 20px;
-}
-
-:is(.popular, .blog) .card-title > a { color: inherit; }
-
-:is(.popular, .blog) .card-title > a:is(:hover, :focus) { color: var(--viridian-green); }
 
 
 
@@ -330,7 +268,7 @@ body {
 
 .navbar {
   width: 100%;
-  padding: 20px 10px;
+  padding: 10px 10px;
   opacity: 0;
   visibility: hidden;
   transition: var(--transition-1);
@@ -390,11 +328,7 @@ body {
   margin-bottom: 15px;
 }
 
-.btn-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-}
+
 
 
 
@@ -420,42 +354,6 @@ body {
   gap: 30px;
 }
 
-.destination-card {
-  position: relative;
-  border-radius: var(--radius-6);
-  overflow: hidden;
-}
-
-.destination-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(hsla(222, 46%, 17%, 0), hsla(222, 46%, 17%, 0.7));
-}
-
-.destination-card img { transition: var(--transition-2); }
-
-.destination-card:is(:hover, :focus) img { transform: scale(1.1); }
-
-.destination-card .card-content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 30px;
-  z-index: 1;
-}
-
-.destination-card .card-subtitle {
-  color: var(--mikado-yellow);
-  font-family: var(--ff-comforter-brush);
-  font-size: var(--fs-5);
-}
-
-.destination-card .card-title {
-  color: var(--white-1);
-  font-family: var(--ff-abril-fatface);
-}
 
 
 
@@ -565,13 +463,29 @@ body {
 }
 
 .btn-link {
-  color: var(--viridian-green);
+  background: #B29CE4; /* Couleur de fond du bouton */
+  color: var(--white-1); /* Couleur du texte */
   font-weight: var(--fw-700);
+  width: max-content;
+  padding: 10px 25px;
+  border: 2px solid #6E5B9A; /* Bordure avec la même couleur */
+  border-radius: var(--radius-6);
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
-  gap: 5px;
+  position: absolute;
+  top: 50%; /* Positionner au centre verticalement */
+  left: 50%; /* Positionner au centre horizontalement */
+  transform: scale(1.05); /* Ajuste pour centrer précisément */
 }
+
+
+/* Effet au survol */
+.btn-link:is(:hover, :focus) {
+  color: var(--viridian-green); /* Couleur au survol */
+  transform: scale(1.05); /* Agrandissement au survol */
+}
+
 
 .btn-link ion-icon { font-size: 20px; }
 
@@ -1031,3 +945,31 @@ body {
   .about .container { grid-template-columns: 0.7fr 1fr; }
 
 }
+/*-----------------------------------*\
+  #style.css
+\*-----------------------------------*/
+
+/* ----------------------------------- */
+/* Button */
+.btn {
+  background: #6E5B9A; /* Couleur de fond du bouton */
+  color: var(--white-1); /* Couleur du texte */
+  font-weight: var(--fw-700);
+  width: max-content;
+  padding: 10px 25px;
+  border: 2px solid #6E5B9A; /* Bordure avec la même couleur */
+  border-radius: var(--radius-6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto; /* Centrage horizontal */
+}
+
+
+
+.btn:is(:hover, :focus) {
+  background: transparent;
+  color: #6E5B9A; /* Changer la couleur du texte au survol */
+  border-color: #6E5B9A;
+}
+
