@@ -1,5 +1,5 @@
 body {
-    background-color: #6E5B9A;
+    background-color: #f0f6ff;
 }
 
 li, a {
@@ -23,7 +23,7 @@ header {
     justify-content: flex-end;
     align-items: center;
     padding: 30px 10%;
-    background-color: #FF5C00;
+    background-color: #6E5B9A;
 }
 
 .logo {
